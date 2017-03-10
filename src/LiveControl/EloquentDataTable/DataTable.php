@@ -107,7 +107,6 @@ class DataTable
 
         $this->addSelect();
         $this->addFilters();
-
         $this->filtered = $this->builder->count();
 
         $this->addOrderBy();
@@ -217,7 +216,7 @@ class DataTable
             return 'CONCAT(' . implode(', " ", ', $this->getRawColumns($column)) . ')';
         }
 
-        return Model::resolveConnection()->getQueryGrammar()->wrap($column);
+        return $column;//Model::resolveConnection()->getQueryGrammar()->wrap($column);
     }
 
     /**
@@ -236,10 +235,10 @@ class DataTable
         $rawSelect = [];
         foreach ($this->columns as $index => $column) {
             if (isset($this->rawColumns[$index])) {
-                $rawSelect[] = $this->rawColumns[$index] . ' as ' . Model::resolveConnection()->getQueryGrammar()->wrap($this->columnNames[$index]);
+                $rawSelect[] = $this->rawColumns[$index] . ' as ' . $this->columnNames[$index];//Model::resolveConnection()->getQueryGrammar()->wrap($this->columnNames[$index]);
             }
         }
-        $this->builder = $this->builder->select(new raw(implode(', ', $rawSelect)));
+        $this->builder = $this->builder->select($this->columnNames);
     }
 
     /**
@@ -286,7 +285,7 @@ class DataTable
             function ($query) use ($search) {
                 foreach ($this->columns as $column) {
                     $query->orWhere(
-                        new raw($this->getRawColumnQuery($column)),
+                        $this->getRawColumnQuery($column),
                         'like',
                         '%' . $search . '%'
                     );
@@ -303,7 +302,7 @@ class DataTable
         foreach ($this->columns as $i => $column) {
             if (static::$versionTransformer->isColumnSearched($i)) {
                 $this->builder->where(
-                    new raw($this->getRawColumnQuery($column)),
+                    $this->getRawColumnQuery($column),
                     'like',
                     '%' . static::$versionTransformer->getColumnSearchValue($i) . '%'
                 );
