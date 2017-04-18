@@ -26,6 +26,8 @@ class DataTable
     private $total = 0;
     private $filtered = 0;
 
+    private $customFilters = [];
+
     private $rows = [];
 
     /**
@@ -87,6 +89,37 @@ class DataTable
     {
         static::$versionTransformer = $versionTransformer;
         return $this;
+    }
+
+    /**
+     * @param $column
+     * @param $values
+     */
+    public function addCustomFilterAndWhereIn($column, $value)
+    {
+        $this->addCustomFilter('whereIn', $column, $column);
+    }
+
+    public function addCustomFilterOrWhereIn($column, $value)
+    {
+        $this->addCustomFilter('OrWhereIn', $column, $value);
+    }
+
+    public function addCustomOrWhere($column, $value)
+    {
+        $this->addCustomFilter('orWhere', $column, $value);
+    }
+
+    private function addCustomFilter($type, $column, $value)
+    {
+        $this->customFilters[] = ['type' => $type, 'column' => $column, 'value' => $value];
+    }
+
+    private function addCustomFilters()
+    {
+        foreach ($this->customFilters as $customFilter) {
+            $this->builder->{$customFilter['type']}($customFilter['column'], $customFilter['value']);
+        }
     }
 
     /**
@@ -173,7 +206,7 @@ class DataTable
         $names = [];
         foreach ($this->columns as $index => $column) {
             if ($column instanceof ExpressionWithName) {
-                $names[] = $column->getName();
+                $names[$index] = $column->getName();
                 continue;
             }
 
@@ -181,8 +214,9 @@ class DataTable
                 $column = explode('.', $column);
             }
 
-            $names[] = (is_array($column) ? $this->arrayToCamelcase($column) : $column);
+            $names[$index] = (is_array($column) ? $this->arrayToCamelcase($column) : $column);
         }
+
         return $names;
     }
 
@@ -272,6 +306,7 @@ class DataTable
             $this->addAllFilter($search);
         }
         $this->addColumnFilters();
+        $this->addCustomFilters();
         return $this;
     }
 
@@ -342,3 +377,4 @@ class DataTable
         }
     }
 }
+
