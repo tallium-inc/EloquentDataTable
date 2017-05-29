@@ -93,24 +93,41 @@ class DataTable
 
     /**
      * @param $column
-     * @param $values
+     * @param $value
      */
     public function addCustomFilterAndWhereIn($column, $value)
     {
-        $this->addCustomFilter('whereIn', $column, $column);
+        $this->addCustomFilter('whereIn', $column, $value);
     }
 
+    /**
+     * @param $column
+     * @param $value
+     */
     public function addCustomFilterOrWhereIn($column, $value)
     {
         $this->addCustomFilter('OrWhereIn', $column, $value);
     }
 
+    /**
+     * @param $column
+     * @param $value
+     */
     public function addCustomOrWhere($column, $value)
     {
         $this->addCustomFilter('orWhere', $column, $value);
     }
 
-    private function addCustomFilter($type, $column, $value)
+    /**
+     * @param $column
+     * @param $value
+     */
+    public function addCustomAndWhere($column, $value)
+    {
+       $this->addCustomFilter('where', $column, $value);
+    }
+
+    public function addCustomFilter($type, $column, $value)
     {
         $this->customFilters[] = ['type' => $type, 'column' => $column, 'value' => $value];
     }
@@ -377,4 +394,3 @@ class DataTable
         }
     }
 }
-
