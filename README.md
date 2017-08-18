@@ -57,7 +57,7 @@ class UserController {
       $users->where('city', '=', 'London'),
       ['email', 'firstname', 'lastname']
     );
-    
+
     return $dataTable->make();
   }
 }
@@ -78,7 +78,7 @@ class UserController {
       $users,
       ['email', ['firstname', 'lastname'], 'city']
     );
-    
+
     return $dataTable->make();
   }
 }
@@ -103,7 +103,7 @@ class UserController {
         'city'
       ]
     );
-    
+
     return $dataTable->make();
   }
 }
@@ -120,7 +120,7 @@ class UserController {
   {
     $users = new User();
     $dataTable = new DataTable($users, ['id', ['firstname', 'lastname'], 'email', 'city']);
-    
+
     $dataTable->setFormatRowFunction(function ($user) {
       return [
         $user->id,
@@ -130,12 +130,36 @@ class UserController {
         '<a href="/users/delete/' . $user->id . '">&times;</a>'
       ];
     });
-    
+
     return $dataTable->make();
   }
 }
 ```
 
+### Add custom filters
+If you want to add custom filters (conditions) for db builder, you can use this methods:
+#### AND IN
+```php
+  $dataTable->addCustomFilterAndWhereIn($column, $value)
+```
+#### OR IN
+```php
+  $dataTable->addCustomFilterOrWhereIn($column, $value)
+```
+
+#### OR
+```php
+  $dataTable->addCustomFilterOrWhere($column, $value)
+```
+#### AND
+```php
+  $dataTable->addCustomFilterOrWhere($column, $value)
+```
+
+#### Low-level function
+```php
+  $dataTable->addCustomFilter($type, $column, $value, $condition = '=')
+```
 
 ### Showing results with relations
 ```php
@@ -150,7 +174,7 @@ class UserController {
     	$users->with('country'),
     	['name', 'country_id', 'email', 'id']
     );
-    
+
     $dataTable->setFormatRowFunction(function ($user) {
     	return [
     		'<a href="/users/'.$user->id.'">'.$user->name.'</a>',
@@ -159,7 +183,7 @@ class UserController {
     		'<a href="/users/delete/'.$user->id.'">&times;</a>'
     	];
     });
-    
+
     return $dataTable->make();
   }
 }

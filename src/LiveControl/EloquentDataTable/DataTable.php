@@ -122,20 +122,25 @@ class DataTable
      * @param $column
      * @param $value
      */
-    public function addCustomAndWhere($column, $value)
+    public function addCustomAndWhere($column, $value, $condition = '=')
     {
-       $this->addCustomFilter('where', $column, $value);
+        $this->addCustomFilter('where', $column, $value, $condition);
     }
 
-    public function addCustomFilter($type, $column, $value)
+    public function addCustomFilter($type, $column, $value, $condition = '=')
     {
-        $this->customFilters[] = ['type' => $type, 'column' => $column, 'value' => $value];
+        $this->customFilters[] = ['type' => $type, 'column' => $column, 'value' => $value, 'condition' => $condition];
     }
 
     private function addCustomFilters()
     {
         foreach ($this->customFilters as $customFilter) {
-            $this->builder->{$customFilter['type']}($customFilter['column'], $customFilter['value']);
+            if (mb_stripos("in", mb_strtolower($customFilter['type']))) {
+                $this->builder->{$customFilter['type']}($customFilter['column'], $customFilter['value']);
+            }
+            else {
+                $this->builder->{$customFilter['type']}($customFilter['column'], $customFilter['condition'], $customFilter['value']);
+            }
         }
     }
 
