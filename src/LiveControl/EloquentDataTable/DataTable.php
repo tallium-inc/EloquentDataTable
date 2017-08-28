@@ -8,7 +8,6 @@ use Illuminate\Database\Query\Expression as raw;
 use LiveControl\EloquentDataTable\VersionTransformers\Version110Transformer;
 use LiveControl\EloquentDataTable\VersionTransformers\VersionTransformerContract;
 
-
 class DataTable
 {
     private $builder;
@@ -135,7 +134,7 @@ class DataTable
     private function addCustomFilters()
     {
         foreach ($this->customFilters as $customFilter) {
-            if (mb_stripos("in", mb_strtolower($customFilter['type']))) {
+            if (mb_stripos(mb_strtolower($customFilter['type']), "in")) {
                 $this->builder->{$customFilter['type']}($customFilter['column'], $customFilter['value']);
             }
             else {
