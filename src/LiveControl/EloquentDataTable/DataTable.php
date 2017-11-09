@@ -138,7 +138,11 @@ class DataTable
                 $this->builder->{$customFilter['type']}($customFilter['column'], $customFilter['value']);
             }
             else {
-                $this->builder->{$customFilter['type']}($customFilter['column'], $customFilter['condition'], $customFilter['value']);
+                if ($customFilter['column'] == 'verification_flags') {
+                    $this->builder->whereNotNull('verification_flags.'. $customFilter['value'])->where('verification_flags', '!=', []);
+                } else {
+                    $this->builder->{$customFilter['type']}($customFilter['column'], $customFilter['condition'], $customFilter['value']);
+                }
             }
         }
     }
