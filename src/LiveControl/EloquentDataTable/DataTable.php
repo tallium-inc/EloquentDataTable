@@ -139,14 +139,21 @@ class DataTable
             }
             else {
                 if ($customFilter['column'] == 'verification_flags') {
-                    $this->builder->whereNotNull('verification_flags.'. $customFilter['value'])->where('verification_flags', '!=', []);
+                    if($customFilter['value'] == 'none'){
+                        $this->builder->whereNull('verification_flags')->orWhere('verification_flags', '=', []);
+                    }elseif($customFilter['value'] == 'all'){
+                        $this->builder->whereNotNull('verification_flags')->where('verification_flags', '!=', []);
+                    }
+                    else{
+                        $this->builder->whereNotNull('verification_flags.'. $customFilter['value'])->where('verification_flags', '!=', []);
+                    }
                 } else {
                     $this->builder->{$customFilter['type']}($customFilter['column'], $customFilter['condition'], $customFilter['value']);
                 }
             }
         }
     }
-
+    
     /**
      * Make the datatable response.
      * @return array
