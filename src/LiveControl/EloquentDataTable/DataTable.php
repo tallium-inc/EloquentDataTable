@@ -134,22 +134,14 @@ class DataTable
     private function addCustomFilters()
     {
         foreach ($this->customFilters as $customFilter) {
-            if (mb_stripos(mb_strtolower($customFilter['type']), "in")) {
+            if(is_callable($customFilter['type'])) {
+                call_user_func($customFilter['type'],$this->builder,$customFilter['value']);
+            }
+            elseif (mb_stripos(mb_strtolower($customFilter['type']), "in")) {
                 $this->builder->{$customFilter['type']}($customFilter['column'], $customFilter['value']);
             }
-            else {
-                if ($customFilter['column'] == 'verification_flags') {
-                    if($customFilter['value'] == 'none'){
-                        $this->builder->whereNull('verification_flags')->orWhere('verification_flags', '=', []);
-                    }elseif($customFilter['value'] == 'all'){
-                        $this->builder->whereNotNull('verification_flags')->where('verification_flags', '!=', []);
-                    }
-                    else{
-                        $this->builder->whereNotNull('verification_flags.'. $customFilter['value'])->where('verification_flags', '!=', []);
-                    }
-                } else {
-                    $this->builder->{$customFilter['type']}($customFilter['column'], $customFilter['condition'], $customFilter['value']);
-                }
+            else{
+                $this->builder->{$customFilter['type']}($customFilter['column'], $customFilter['condition'], $customFilter['value']);
             }
         }
     }
