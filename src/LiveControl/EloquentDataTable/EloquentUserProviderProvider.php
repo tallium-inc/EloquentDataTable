@@ -1,5 +1,6 @@
 <?php namespace LiveControl\EloquentDataTable;
 use Illuminate\Contracts\Auth\Authenticatable as UserContract;
+use Illuminate\Support\Str;
 
 class EloquentUserProviderProvider extends \Illuminate\Auth\EloquentUserProvider
 {
